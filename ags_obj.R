@@ -1,3 +1,11 @@
+library(rayshader)
+library(MetBrewer)
+library(colorspace)
+library(sf)
+library(raster)
+library(ggplot2)
+library(stars)
+
 data <- st_read("data/kontur_population_MX_20220630.gpkg")
 ags <- getData("GADM", country = "Mexico", level = 1) %>% 
   st_as_sf() %>%
@@ -64,7 +72,15 @@ mat |>
           solid = FALSE,
           shadowdepth = 0)
 
-outfile <- 'obj_models/ags_model.obj'
+png_outfile <- 'imgs/ags_model.png'
 
-save_obj(outfile)
+render_camera(theta = -20, phi = 45, zoom = .8)
+
+render_highquality(
+  filename = png_outfile
+)
+
+# obj_outfile <- 'obj_models/ags_model.obj'
+
+# save_obj(obj_outfile)
 
