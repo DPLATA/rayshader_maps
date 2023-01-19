@@ -10,7 +10,7 @@ library(tidyverse)
 mex_population <- st_read("data/kontur_population_MX_20220630.gpkg")
 state <- getData("GADM", country = "Mexico", level = 1) %>% 
   st_as_sf() %>%
-  filter(NAME_1 == "Aguascalientes") |> 
+  filter(NAME_1 == "Oaxaca") |> 
   st_transform(crs= st_crs(data))
 
 state |>
@@ -52,12 +52,12 @@ if (width > height) {
 size <- 1000
 
 state_rasterize <- st_rasterize(population_state_intersection, 
-                         nx = floor(size * w_ratio),
-                         ny = floor(size * h_ratio))
+                                nx = floor(size * w_ratio),
+                                ny = floor(size * h_ratio))
 
 population_matrix <- matrix(state_rasterize$population, 
-              nrow = floor(size * w_ratio),
-              ncol = floor(size * h_ratio))
+                            nrow = floor(size * w_ratio),
+                            ncol = floor(size * h_ratio))
 
 
 c1 <- met.brewer("OKeeffe2")
@@ -73,7 +73,7 @@ population_matrix |>
           solid = FALSE,
           shadowdepth = 0)
 
-png_outfile <- 'imgs/aguascalientes.png'
+png_outfile <- 'imgs/oaxaca.png'
 
 render_camera(theta = -20, phi = 45, zoom = .8)
 
@@ -85,4 +85,49 @@ render_highquality(
   lightcolor = c(c1[2], "white"),
   lightintensity = c(600, 100),
 )
+
+
+# higher quality render
+
+size <- 5000
+
+ags_rast <- st_rasterize(st_ags, 
+                         nx = floor(size * w_ratio),
+                         ny = floor(size * h_ratio))
+
+mat <- matrix(ags_rast$population, 
+              nrow = floor(size * w_ratio),
+              ncol = floor(size * h_ratio))
+
+mat |> 
+  height_shade(texture = texture) |> 
+  plot_3d(heightmap = mat,
+          zscale = 100 / 5,
+          solid = FALSE,
+          shadowdepth = 0)
+
+render_camera(theta = -20, phi = 45, zoom = .8)
+
+
+{
+  start_time <- Sys.time()
+  cat(crayon::cyan(start_time), "\n")
+  if (!file.exists(png_outfile)) {
+    png::writePNG(matrix(1), target = outfile)
+    }
+    render_highquality(
+      filename = png_outfile,
+      interactive = FALSE,
+      lightdirection = 280,
+      lightaltitude = c(20, 80),
+      lightcolor = c(c1[2], "white"),
+      lightintensity = c(600, 100),
+      samples = 450,
+      width = 6000,
+      height = 6000
+    )
+    end_time <- Sys.time()
+    diff <- end_time - start_time
+    cat(crayon::cyan(diff), "\n")
+}
 
