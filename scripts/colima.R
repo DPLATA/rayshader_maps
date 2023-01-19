@@ -73,7 +73,7 @@ population_matrix |>
           solid = FALSE,
           shadowdepth = 0)
 
-png_outfile <- 'imgs/campeche.png'
+png_outfile <- 'imgs/colima.png'
 
 render_camera(theta = -20, phi = 45, zoom = .8)
 
