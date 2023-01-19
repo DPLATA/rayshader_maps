@@ -1,4 +1,0 @@
-newmtl ray_surface 
-map_Kd ags_model.png 
-illum 0 
-
