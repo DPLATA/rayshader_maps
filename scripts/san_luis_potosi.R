@@ -74,7 +74,7 @@ population_matrix |>
           solid = FALSE,
           shadowdepth = 0)
 
-png_outfile <- 'imgs/san_luis_potosí.png'
+png_outfile <- 'imgs/san_luis_potosi.png'
 
 render_camera(theta = -20, phi = 45, zoom = .8)
 
