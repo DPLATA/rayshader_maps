@@ -8,10 +8,11 @@ library(stars)
 library(tidyverse)
 
 mex_population <- st_read("data/kontur_population_MX_20220630.gpkg")
-state <- getData("GADM", country = "Mexico", level = 1) %>% 
+mxRDS <- readRDS("data/gadm36_MEX_1_sp.rds")
+state <- mxRDS %>% 
   st_as_sf() %>%
   filter(NAME_1 == "Tlaxcala") |> 
-  st_transform(crs= st_crs(data))
+  st_transform(crs= st_crs(mex_population))
 
 state |>
   ggplot() +
