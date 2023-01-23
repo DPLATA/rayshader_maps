@@ -87,3 +87,53 @@ render_highquality(
   lightintensity = c(600, 100),
 )
 
+# higher quality render
+
+size <- 2000
+
+state_rasterize <- st_rasterize(population_state_intersection, 
+                                nx = floor(size * w_ratio),
+                                ny = floor(size * h_ratio))
+
+population_matrix <- matrix(state_rasterize$population, 
+                            nrow = floor(size * w_ratio),
+                            ncol = floor(size * h_ratio))
+
+
+c1 <- met.brewer("OKeeffe2")
+swatchplot(c1)
+
+texture <- grDevices::colorRampPalette(c1, bias = 2)(256)
+swatchplot(texture)
+
+population_matrix |> 
+  height_shade(texture = texture) |> 
+  plot_3d(heightmap = population_matrix,
+          zscale = 100 / 2,
+          solid = FALSE,
+          shadowdepth = 0)
+
+{
+  png_outfile <- 'hd_imgs/aguascalientes.png'
+  render_camera(theta = -20, phi = 45, zoom = .8)
+  
+  start_time <- Sys.time()
+  cat(crayon::cyan(start_time), "\n")
+  if (!file.exists(png_outfile)) {
+    png::writePNG(matrix(1), target = png_outfile)
+  }
+  render_highquality(
+    filename = png_outfile,
+    interactive = FALSE,
+    lightdirection = 280,
+    lightaltitude = c(20, 80),
+    lightcolor = c(c1[2], "white"),
+    lightintensity = c(600, 100),
+    samples = 300,
+    width = 2000,
+    height = 2000
+  )
+  end_time <- Sys.time()
+  diff <- end_time - start_time
+  cat(crayon::cyan(diff), "\n")
+}
